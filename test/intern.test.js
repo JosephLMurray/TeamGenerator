@@ -12,4 +12,9 @@ describe('Intern', () => {
 
     expect(intern.getRole()).toBe(intern.constructor.name);
   });
+  it('Returns school when getDetail is called', () => {
+    const intern = new Intern('Joe', 3, 'email@email.com', 'UCF');
+
+    expect(intern.getDetail()).toBe(intern.school);
+  });
 });

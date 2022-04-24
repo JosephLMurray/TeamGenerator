@@ -12,4 +12,9 @@ describe('Manager', () => {
 
     expect(manager.getRole()).toBe(manager.constructor.name);
   });
+  it('Returns office number when getDetail is called', () => {
+    const manager = new Manager('Joe', 3, 'email.email.com', 3440);
+
+    expect(manager.getDetail()).toBe(manager.officeNum);
+  });
 });

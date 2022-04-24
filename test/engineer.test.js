@@ -12,4 +12,9 @@ describe('Engineer', () => {
 
     expect(engineer.getRole()).toBe(engineer.constructor.name);
   });
+  it('Returns github when getDetail is called', () => {
+    const engineer = new Engineer('Joe', 3, 'email@email.com', 'Joejoerabbit');
+
+    expect(engineer.getDetail()).toBe(engineer.github);
+  });
 });
