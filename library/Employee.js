@@ -24,6 +24,22 @@ class Employee {
     }
     return detail;
   }
+
+  getIcon() {
+    let icon = '';
+    switch (this.getRole()) {
+      case 'Intern':
+        icon = 'user-graduate';
+        break;
+      case 'Manager':
+        icon = 'mug-hot';
+        break;
+      case 'Engineer':
+        icon = 'glasses';
+        break;
+    }
+    return icon;
+  }
 }
 
 module.exports = Employee;
