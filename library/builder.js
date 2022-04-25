@@ -14,7 +14,7 @@ const headerBlock = `<!DOCTYPE html>
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
     />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <title>Team Info</title>
   </head>
   <body class="min-vh-100 vw-100">
@@ -50,7 +50,7 @@ const cardBuilder = (data) => {
         )
       : new Intern(employee.name, employee.id, employee.email, employee.school);
     middleSection += `           <div
-              class="card my-3"
+              class="card shadow-lg my-3"
               style="min-width: 18rem; width: 18rem; max-width: 18rem"
             >
               <div class="card-header text-white bg-primary">
@@ -60,7 +60,7 @@ const cardBuilder = (data) => {
                 </h3>
               </div>
               <div class="card-body">
-                <div class="card-text">
+                <div class="card-text shadow">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">ID: ${_employee.id}</li>
                     <li class="list-group-item">
@@ -94,7 +94,9 @@ const fullBuilder = (data) => {
   fullBuild += cardBuilder(data);
   fullBuild += footerBlock;
   fs.writeFile('./dist/teams.html', fullBuild, (err) =>
-    err ? console.log(err) : console.log('Success!')
+    err
+      ? console.log(err)
+      : console.log('Success! Your file is in the dist folder.')
   );
 };
 
