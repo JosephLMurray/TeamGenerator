@@ -1,56 +1,98 @@
-const fs = require('fs');
-const { checkString, checkNum, checkEmail } = require('./library/validate');
 const inquirer = require('inquirer');
-const Employee = require('./library/Employee');
-const Manager = require('./library/Manager');
-const Intern = require('./library/Intern');
-const Engineer = require('./library/Engineer');
+
+const fullBuilder = require('./library/builder');
+const { checkString, checkNum, checkEmail } = require('./library/validate');
+
+const managerPrompts = [
+  {
+    type: 'input',
+    name: 'name',
+    message: "What is the Manager's name?",
+    validate: checkString,
+    filter: (input) => {
+      return input.trim();
+    }
+  },
+  {
+    type: 'input',
+    name: 'id',
+    message: "What is the Manager's ID number?",
+    validate: checkNum,
+    filter: (input) => {
+      return isNaN(input) || input === '' ? '' : parseInt(input, 10);
+    }
+  },
+  {
+    type: 'input',
+    name: 'email',
+    message: "What is the Manager's email address?",
+    validate: checkEmail,
+    filter: (input) => {
+      return input.trim();
+    }
+  },
+  {
+    type: 'input',
+    name: 'officeNum',
+    message: "What is the Manager's office number?",
+    validate: checkNum,
+    filter: (input) => {
+      return isNaN(input) || input === '' ? '' : parseInt(input, 10);
+    }
+  }
+];
 
 const collectInputs = async (inputs = []) => {
-  const prompts = [
+  const employeePrompts = [
     {
       type: 'list',
-      name: 'employeeType',
-      message: 'What kind of employee would you like to add?',
-      choices: ['Manager', 'Engineer', 'Intern']
+      name: 'userChoice',
+      message: 'What would you like to do?',
+      choices: ['Add an Engineer', 'Add an Intern', "I'm done"]
     },
     {
       type: 'input',
       name: 'name',
-      message: "What is the employee's name?",
+      message: "What is the Employee's name?",
       validate: checkString,
       filter: (input) => {
         return input.trim();
+      },
+      when(answers) {
+        return (
+          answers.userChoice === 'Add an Engineer' ||
+          answers.userChoice === 'Add an Intern'
+        );
       }
     },
     {
       type: 'input',
-      name: 'employeeID',
-      message: "What is the employee's ID number?",
-      validate: checkNum,
-      filter: (input) => {
-        return isNaN(input) || input === '' ? '' : parseInt(input, 10);
-      }
-    },
-    {
-      type: 'input',
-      name: 'email',
-      message: "What is the employee's email address?",
-      validate: checkEmail,
-      filter: (input) => {
-        return input.trim();
-      }
-    },
-    {
-      type: 'input',
-      name: 'officeNum',
-      message: 'What is their office number?',
+      name: 'id',
+      message: "What is the Employee's ID number?",
       validate: checkNum,
       filter: (input) => {
         return isNaN(input) || input === '' ? '' : parseInt(input, 10);
       },
       when(answers) {
-        return answers.employeeType === 'Manager';
+        return (
+          answers.userChoice === 'Add an Engineer' ||
+          answers.userChoice === 'Add an Intern'
+        );
+      }
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: "What is the Employee's email address?",
+      validate: checkEmail,
+      filter: (input) => {
+        return input.trim();
+      },
+      when(answers) {
+        return (
+          answers.userChoice === 'Add an Engineer' ||
+          answers.userChoice === 'Add an Intern'
+        );
       }
     },
     {
@@ -62,7 +104,7 @@ const collectInputs = async (inputs = []) => {
         return input.trim();
       },
       when(answers) {
-        return answers.employeeType === 'Intern';
+        return answers.userChoice === 'Add an Intern';
       }
     },
     {
@@ -74,26 +116,29 @@ const collectInputs = async (inputs = []) => {
         return input.trim();
       },
       when(answers) {
-        return answers.employeeType === 'Engineer';
+        return answers.userChoice === 'Add an Engineer';
       }
-    },
-    {
-      type: 'confirm',
-      name: 'again',
-      message: 'Enter another employee? ',
-      default: true
     }
   ];
+  const { userChoice, ...answers } = await inquirer.prompt(employeePrompts);
+  const newInputs =
+    JSON.stringify(answers) === '{}' ? inputs : [...inputs, answers];
 
-  const { again, ...answers } = await inquirer.prompt(prompts);
-
-  const newInputs = [...inputs, answers];
-  return again ? collectInputs(newInputs) : newInputs;
+  return userChoice === "I'm done" ? newInputs : collectInputs(newInputs);
 };
 
-const main = async () => {
-  const inputs = await collectInputs();
-  console.log(inputs);
+const main = () => {
+  inquirer
+    .prompt(managerPrompts)
+    .then((results) => {
+      return collectInputs([results]);
+    })
+    .then((data) => {
+      fullBuilder(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 main();
